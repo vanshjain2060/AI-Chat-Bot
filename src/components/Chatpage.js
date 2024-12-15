@@ -1,105 +1,212 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import ReactMarkdown from "react-markdown";
+import { User, MessageCircle, ArrowLeft, Send, Mic, Trash2 } from "react-feather";
 import Button from "./ui/Button";
 import Input from "./ui/Input";
 import Card from "./ui/Card";
-import { ArrowLeft, Send } from "react-feather";
+import Select from "./ui/Select";
+import { sendMessageToMonster } from "../services/monsterApi";
+import { findNearbyHospitals } from "../services/hospitalApi";
+import "./ChatPage.css";
 
 function ChatPage({ onBackToHome }) {
   const [messages, setMessages] = useState([
-    { text: "Hello! How can I assist you today?", sender: "bot" },
+    { text: "Hello! How can I assist you today?", sender: "bot", timestamp: new Date() },
   ]);
   const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [selectedModel, setSelectedModel] = useState("Meta-Llama");
+  const [language, setLanguage] = useState("en-US");
   const scrollAreaRef = useRef(null);
 
   useEffect(() => {
     if (scrollAreaRef.current) {
       scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, isTyping]);
 
-  const handleSendMessage = (e) => {
+  const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (input.trim()) {
-      setMessages([...messages, { text: input, sender: "user" }]);
+    if (input.trim() && !isLoading) {
+      const userMessage = input.trim();
       setInput("");
-      // Simulate bot response
-      setTimeout(() => {
+      setIsLoading(true);
+      setMessages((prev) => [
+        ...prev,
+        { text: userMessage, sender: "user", timestamp: new Date() },
+      ]);
+      setIsTyping(true);
+      try {
+        const botResponse = await sendMessageToMonster(
+          [{ text: userMessage, sender: "user" }],
+          selectedModel
+        );
         setMessages((prev) => [
           ...prev,
-          {
-            text: "I'm processing your request. How else can I help you?",
-            sender: "bot",
-          },
+          { text: botResponse, sender: "bot", timestamp: new Date() },
         ]);
-      }, 1000);
+      } catch (error) {
+        console.error("Error sending message:", error);
+      } finally {
+        setIsLoading(false);
+        setIsTyping(false);
+      }
     }
   };
 
+  const handleClearChat = () => {
+    setMessages([]);
+  };
+
+  const handleSpeechRecognition = () => {
+    if (!('webkitSpeechRecognition' in window)) {
+      alert('Speech recognition is not supported in this browser.');
+      return;
+    }
+
+    const recognition = new window.webkitSpeechRecognition();
+    recognition.lang = language;
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onresult = (event) => {
+      const speechResult = event.results[0][0].transcript;
+      setInput(speechResult);
+    };
+
+    recognition.onerror = (event) => {
+      console.error('Speech recognition error:', event.error);
+    };
+
+    recognition.start();
+  };
+
+  const handleFindHospitals = async () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const { latitude, longitude } = position.coords;
+        setIsLoading(true);
+        setMessages((prev) => [
+          ...prev,
+          { text: "Finding nearby hospitals...", sender: "bot", timestamp: new Date() },
+        ]);
+
+        try {
+          const hospitals = await findNearbyHospitals(latitude, longitude);
+
+          if (!hospitals || hospitals.length === 0) {
+            setMessages((prev) => [
+              ...prev,
+              { text: "No nearby hospitals found.", sender: "bot", timestamp: new Date() },
+            ]);
+            return;
+          }
+
+          const hospitalList = hospitals
+            .map(
+              (hospital, index) =>
+                `${index + 1}. **${hospital.name}**\n_Address_: ${hospital.vicinity}`
+            )
+            .join("\n\n");
+
+          setMessages((prev) => [
+            ...prev,
+            { text: `Here are some nearby hospitals:\n\n${hospitalList}`, sender: "bot", timestamp: new Date() },
+          ]);
+        } catch (error) {
+          console.error("Error fetching hospitals:", error);
+          setMessages((prev) => [
+            ...prev,
+            { text: "Error fetching hospitals. Please try again later.", sender: "bot", timestamp: new Date() },
+          ]);
+        } finally {
+          setIsLoading(false);
+        }
+      });
+    } else {
+      setMessages((prev) => [
+        ...prev,
+        { text: "Geolocation is not supported by this browser.", sender: "bot", timestamp: new Date() },
+      ]);
+    }
+  };
+
+  const handleLanguageChange = (e) => {
+    setLanguage(e.target.value);
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-purple-100 to-pink-100">
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md"
-      >
-        <Card className="h-[80vh] flex flex-col bg-white bg-opacity-80 backdrop-blur-sm shadow-xl">
-          <div className="flex flex-row items-center p-4 border-b">
-            <Button variant="ghost" onClick={onBackToHome} className="mr-2">
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <h2 className="text-2xl font-bold text-center flex-grow text-purple-600">
-              HealthChat
-            </h2>
-          </div>
-          <div className="flex-grow overflow-hidden p-4">
-            <div className="h-full overflow-y-auto pr-4" ref={scrollAreaRef}>
-              <AnimatePresence initial={false}>
-                {messages.map((message, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.3 }}
-                    className={`mb-4 ${
-                      message.sender === "user" ? "text-right" : "text-left"
-                    }`}
-                  >
-                    <span
-                      className={`inline-block p-2 rounded-lg ${
-                        message.sender === "user"
-                          ? "bg-purple-500 text-white"
-                          : "bg-gray-200 text-gray-800"
-                      }`}
-                    >
-                      {message.text}
-                    </span>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
-          </div>
-          <div className="p-4 border-t">
-            <form onSubmit={handleSendMessage} className="flex gap-2">
-              <Input
-                type="text"
-                placeholder="Type your message..."
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                className="flex-grow"
-              />
-              <Button
-                type="submit"
-                className="bg-purple-500 text-white hover:bg-purple-600"
+    <div className="chat-container">
+      <Card className="chat-card">
+        <div className="chat-header">
+          <Button onClick={onBackToHome}>
+            <ArrowLeft />
+          </Button>
+          <Select
+            value={selectedModel}
+            onChange={(e) => setSelectedModel(e.target.value)}
+            className="model-selector"
+          >
+            <option value="Meta-Llama">Meta-Llama</option>
+            <option value="Mistral">Mistral</option>
+            <option value="Microsoft-Phi">Microsoft-Phi</option>
+            <option value="Google-Gemma">Google-Gemma</option>
+          </Select>
+          <Button onClick={handleClearChat}>
+            <Trash2 />
+          </Button>
+        </div>
+        <div className="chat-messages" ref={scrollAreaRef}>
+          <AnimatePresence>
+            {messages.map((message, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className={`message ${message.sender} ${message.isError ? "error" : ""}`}
               >
-                <Send className="h-4 w-4" />
-              </Button>
-            </form>
-          </div>
-        </Card>
-      </motion.div>
+                <div className="message-content">
+                  {message.sender === "bot" ? (
+                    <MessageCircle className="message-icon bot-icon" />
+                  ) : (
+                    <User className="message-icon user-icon" />
+                  )}
+                  <ReactMarkdown>{message.text}</ReactMarkdown>
+                  <span className="timestamp">{message.timestamp.toLocaleTimeString()}</span>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+          {isTyping && (
+            <div className="message bot typing-indicator">
+              <div className="message-content">Bot is typing...</div>
+            </div>
+          )}
+        </div>
+        <div className="chat-input-container">
+          <form onSubmit={handleSendMessage} className="chat-input">
+            <Input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder={isLoading ? "Please wait..." : "Type your message..."}
+              disabled={isLoading}
+            />
+            <Button type="submit" disabled={isLoading || !input.trim()}>
+              <Send />
+            </Button>
+            <Button type="button" onClick={handleSpeechRecognition} disabled={isLoading}>
+              <Mic />
+            </Button>
+          </form>
+        </div>
+      </Card>
+      <button className="find-hospitals-button" onClick={handleFindHospitals} disabled={isLoading}>
+        Find Nearby Hospitals
+      </button>
     </div>
   );
 }
