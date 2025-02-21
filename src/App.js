@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import LandingPage from "./components/LandingPage";
+import LandingPage from './components/LandingPage';
 import ChatPage from "./components/ChatPage";
 import ErrorBoundary from './components/ErrorBoundary';
 import "./App.css";
