@@ -30,9 +30,14 @@ export const sendMessageToMonster = async (messages, model = "Meta-Llama") => {
 
     const userMessage = messageContent.toLowerCase();
     const healthcareKeywords = [
-      "hello","health", "doctor", "medicine", "hospital", "symptom", "treatment", 
+      "hello", "health", "doctor", "medicine", "hospital", "symptom", "treatment", 
       "diagnosis", "appointment", "fever", "cold", "cough", "flu", "infection", 
-      "pain", "injury", "disease", "illness", "therapy", "prescription", "pharmacy"
+      "pain", "injury", "disease", "illness", "therapy", "prescription", "pharmacy",
+      "vaccine", "surgery", "emergency", "clinic", "nurse", "specialist", "cardiology",
+      "neurology", "pediatrics", "oncology", "dermatology", "radiology", "mental health",
+      "wellness", "checkup", "immunization", "rehabilitation", "nutrition", "exercise",
+      "healthcare", "medical", "patient", "consultation", "medication", "recovery",
+      "headache", "migraine", "stomachache", "back pain", "joint pain", "muscle pain"
     ];
 
     const isHealthcareRelated = healthcareKeywords.some(keyword => userMessage.includes(keyword));

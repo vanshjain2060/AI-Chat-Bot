@@ -7,7 +7,6 @@ import Input from "./ui/Input";
 import Card from "./ui/Card";
 import Select from "./ui/Select";
 import { sendMessageToMonster } from "../services/monsterApi";
-import { findNearbyHospitals } from "../services/hospitalApi";
 import "./ChatPage.css";
 
 function ChatPage({ onBackToHome }) {
@@ -83,56 +82,6 @@ function ChatPage({ onBackToHome }) {
     recognition.start();
   };
 
-  const handleFindHospitals = async () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(async (position) => {
-        const { latitude, longitude } = position.coords;
-        setIsLoading(true);
-        setMessages((prev) => [
-          ...prev,
-          { text: "Finding nearby hospitals...", sender: "bot", timestamp: new Date() },
-        ]);
-
-        try {
-          const hospitals = await findNearbyHospitals(latitude, longitude);
-
-          if (!hospitals || hospitals.length === 0) {
-            setMessages((prev) => [
-              ...prev,
-              { text: "No nearby hospitals found.", sender: "bot", timestamp: new Date() },
-            ]);
-            return;
-          }
-
-          const hospitalList = hospitals
-            .map(
-              (hospital, index) =>
-                `${index + 1}. **${hospital.name}**\n_Address_: ${hospital.vicinity}`
-            )
-            .join("\n\n");
-
-          setMessages((prev) => [
-            ...prev,
-            { text: `Here are some nearby hospitals:\n\n${hospitalList}`, sender: "bot", timestamp: new Date() },
-          ]);
-        } catch (error) {
-          console.error("Error fetching hospitals:", error);
-          setMessages((prev) => [
-            ...prev,
-            { text: "Error fetching hospitals. Please try again later.", sender: "bot", timestamp: new Date() },
-          ]);
-        } finally {
-          setIsLoading(false);
-        }
-      });
-    } else {
-      setMessages((prev) => [
-        ...prev,
-        { text: "Geolocation is not supported by this browser.", sender: "bot", timestamp: new Date() },
-      ]);
-    }
-  };
-
   const handleLanguageChange = (e) => {
     setLanguage(e.target.value);
   };
@@ -204,9 +153,6 @@ function ChatPage({ onBackToHome }) {
           </form>
         </div>
       </Card>
-      <button className="find-hospitals-button" onClick={handleFindHospitals} disabled={isLoading}>
-        Find Nearby Hospitals
-      </button>
     </div>
   );
 }
