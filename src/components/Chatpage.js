@@ -17,7 +17,8 @@ function ChatPage({ onBackToHome }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [selectedModel, setSelectedModel] = useState("Meta-Llama");
-  const [language, setLanguage] = useState("en-US");
+  // const [language, setLanguage] = useState("en-US");
+  const language = "en-US";
   const scrollAreaRef = useRef(null);
 
   useEffect(() => {
@@ -82,9 +83,9 @@ function ChatPage({ onBackToHome }) {
     recognition.start();
   };
 
-  const handleLanguageChange = (e) => {
-    setLanguage(e.target.value);
-  };
+  // const handleLanguageChange = (e) => {
+    // setLanguage(e.target.value);
+  // };
 
   return (
     <div className="chat-container">
