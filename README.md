@@ -1,5 +1,7 @@
 # HealthChat
 
+[Live Demo](https://health-bot-six.vercel.app/)
+
 HealthChat is an AI-powered healthcare assistant designed to provide instant answers to health-related queries, book appointments, and offer personalized health tips. This project is built using React and integrates with Google's Vertex AI for natural language processing.
 
 ---
@@ -12,6 +14,7 @@ HealthChat is an AI-powered healthcare assistant designed to provide instant ans
   - [Prerequisites](#prerequisites)
   - [Steps](#steps)
 - [Usage](#usage)
+- [Screenshots](#screenshots)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -72,7 +75,7 @@ Follow these steps to set up the project on your local machine:
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/vanshjain2060/healthchat.git
+   git clone https://github.com/your-username/healthchat.git
    cd healthchat
    ```
 
@@ -106,6 +109,16 @@ Follow these steps to set up the project on your local machine:
 - **Landing Page**: The homepage introduces the app and its features.
 - **Chat Interface**: Interact with the AI assistant for healthcare-related queries.
 - **Contact Form**: Submit feedback or inquiries through the contact section.
+
+---
+
+## Screenshots
+
+### Landing Page
+![Landing Page](https://via.placeholder.com/800x400)
+
+### Chat Interface
+![Chat Interface](https://via.placeholder.com/800x400)
 
 ---
 
