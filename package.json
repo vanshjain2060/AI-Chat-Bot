@@ -4,8 +4,10 @@
   "private": true,
   "homepage": ".",
   "dependencies": {
+    "@ai-sdk/google": "^1.2.14",
     "@shadcn/ui": "^0.0.4",
     "@testing-library/user-event": "^13.5.0",
+    "ai": "^4.3.10",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "dotenv": "^16.4.5",
