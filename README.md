@@ -1,70 +1,135 @@
-# Getting Started with Create React App
+# HealthChat
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+HealthChat is an AI-powered healthcare assistant designed to provide instant answers to health-related queries, book appointments, and offer personalized health tips. This project is built using React and integrates with Google's Vertex AI for natural language processing.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## Table of Contents
 
-### `npm start`
+- [Features](#features)
+- [File Structure](#file-structure)
+- [Setup and Installation](#setup-and-installation)
+  - [Prerequisites](#prerequisites)
+  - [Steps](#steps)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Features
 
-### `npm test`
+- **AI-Powered Chat**: Get instant responses to healthcare-related queries.
+- **Appointment Booking**: Schedule appointments with healthcare professionals.
+- **Personalized Health Tips**: Receive tailored health advice.
+- **Speech Recognition**: Use voice commands for interaction.
+- **Responsive Design**: Works seamlessly across devices.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## File Structure
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+The project is organized as follows:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```
+Health-Care/
+├── public/              # Static files
+│   ├── index.html       # Main HTML file
+│   ├── favicon.ico      # Favicon
+│   └── manifest.json    # PWA configuration
+├── src/                 # Source code
+│   ├── components/      # React components
+│   │   ├── ChatPage.js          # Chat interface
+│   │   ├── LandingPage.js       # Landing page
+│   │   ├── FeatureSection.js    # Features section
+│   │   ├── TestimonialSection.js # Testimonials section
+│   │   ├── ContactSection.js    # Contact form
+│   │   └── ui/                  # Reusable UI components
+│   ├── services/        # API integrations
+│   │   └── geminiApi.js # Handles communication with Vertex AI
+│   ├── App.js           # Main application component
+│   ├── App.css          # Global styles
+│   ├── index.js         # Entry point
+│   └── index.css        # Base styles
+├── .env                 # Environment variables
+├── package.json         # Project dependencies and scripts
+└── README.md            # Project documentation
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+## Setup and Installation
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Follow these steps to set up the project on your local machine:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Prerequisites
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- Node.js (v16 or higher)
+- npm or yarn
+- A Google Cloud account with Vertex AI enabled
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Steps
 
-## Learn More
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/vanshjain2060/healthchat.git
+   cd healthchat
+   ```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+2. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+3. **Set Up Environment Variables**:
+   Create a `.env` file in the root directory and add the following:
+   ```env
+   REACT_APP_GEMINI_API_URL=https://us-central1-aiplatform.googleapis.com/v1/projects/PROJECT_ID/locations/us-central1/models/MODEL_ID:predict
+   REACT_APP_GEMINI_API_KEY=YOUR_API_KEY
+   ```
 
-### Code Splitting
+4. **Run the Application**:
+   ```bash
+   npm start
+   ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+5. **Build for Production**:
+   To create a production build, run:
+   ```bash
+   npm run build
+   ```
 
-### Analyzing the Bundle Size
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Usage
 
-### Making a Progressive Web App
+- **Landing Page**: The homepage introduces the app and its features.
+- **Chat Interface**: Interact with the AI assistant for healthcare-related queries.
+- **Contact Form**: Submit feedback or inquiries through the contact section.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+---
 
-### Advanced Configuration
+## Contributing
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+We welcome contributions from the open-source community! To contribute:
 
-### Deployment
+1. **Fork the repository**.
+2. **Create a new branch** for your feature or bug fix:
+   ```bash
+   git checkout -b feature-name
+   ```
+3. **Commit your changes**:
+   ```bash
+   git commit -m "Add feature-name"
+   ```
+4. **Push to your branch**:
+   ```bash
+   git push origin feature-name
+   ```
+5. **Submit a pull request**.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+---
 
-### `npm run build` fails to minify
+## License
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+This project is licensed under the MIT License. See the `LICENSE` file for details.
