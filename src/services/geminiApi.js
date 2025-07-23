@@ -21,7 +21,7 @@ const healthcareKeywords = [
  * @param {string} modelName - Gemini model identifier, e.g. 'gemini-1.5-pro-latest'
  * @returns {Promise<string>}
  */
-export const sendMessageToGemini = async (messages, modelName = 'gemini-1.5-pro-latest') => {
+export const sendMessageToGemini = async (messages) => {
   if (!messages || messages.length === 0) {
     throw new Error('No messages provided');
   }
@@ -32,8 +32,10 @@ export const sendMessageToGemini = async (messages, modelName = 'gemini-1.5-pro-
   if (!healthcareKeywords.some(kw => contentText.includes(kw))) {
     return "Sorry, I'm a healthcare expert. I can't help with that.";
   }
+
   const google = createGoogleGenerativeAI({
-   apiKey:process.env.REACT_APP_GEMINI_API_KEY
+   apiKey:process.env.REACT_APP_GEMINI_API_KEY,
+   
   });
 
   // Build a chat prompt from history
@@ -43,7 +45,9 @@ export const sendMessageToGemini = async (messages, modelName = 'gemini-1.5-pro-
 
   // Call ai-sdk generateText
   const { text } = await generateText({
-    model: google(modelName),
+    model: google(
+      "gemini-1.5-flash"
+    ),
     prompt,
     temperature: 0.7,
     topP: 0.85,
